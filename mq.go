@@ -10,7 +10,7 @@ var producer *nsq.Producer
 
 var config = nsq.NewConfig()
 
-func Init() (e error) {
+func Init(opts ...Option) (e error) {
 	defer func() {
 		if e != nil {
 			if len(consumers) > 0 {
@@ -26,6 +26,12 @@ func Init() (e error) {
 		}
 	}()
 
+	custom := Options{}
+
+	for _, opt := range opts {
+		opt(&custom)
+	}
+
 	var consumer *nsq.Consumer
 
 	for _, route := range routes {
@@ -40,7 +46,7 @@ func Init() (e error) {
 
 		// Use nsqlookupd to discover nsqd instances.
 		// See also ConnectToNSQD, ConnectToNSQDs, ConnectToNSQLookupds.
-		e = consumer.ConnectToNSQLookupd("localhost:4161")
+		e = consumer.ConnectToNSQLookupd(custom.lookupdAddr)
 		if e != nil {
 			return
 		}
@@ -48,7 +54,7 @@ func Init() (e error) {
 		consumers = append(consumers, consumer)
 	}
 
-	producer, e = nsq.NewProducer("localhost:4150", config)
+	producer, e = nsq.NewProducer(custom.nsqdAddr, config)
 
 	return
 }
