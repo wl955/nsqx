@@ -12,7 +12,7 @@ var config = nsq.NewConfig()
 
 var custom = Options{}
 
-func Init(opts ...Option) (e error) {
+func Init(opts ...Option) (cancel func(), e error) {
 	defer func() {
 		if e != nil {
 			if len(custom.lookupdAddr) > 0 {
@@ -65,20 +65,18 @@ func Init(opts ...Option) (e error) {
 		}
 	}
 
-	return
-}
-
-func Stop() {
-	if len(custom.lookupdAddr) > 0 {
-		for _, consumer := range consumers {
-			// Gracefully stop the consumer.
-			consumer.Stop()
+	return func() {
+		if len(custom.lookupdAddr) > 0 {
+			for _, consumer := range consumers {
+				// Gracefully stop the consumer.
+				consumer.Stop()
+			}
 		}
-	}
-	if len(custom.nsqdAddr) > 0 {
-		// Gracefully stop the producer when appropriate (e.g. before shutting down the service)
-		producer.Stop()
-	}
+		if len(custom.nsqdAddr) > 0 {
+			// Gracefully stop the producer when appropriate (e.g. before shutting down the service)
+			producer.Stop()
+		}
+	}, nil
 }
 
 func Sub(topic string, channel string, handler nsq.Handler) (e error) {
