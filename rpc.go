@@ -75,14 +75,7 @@ func Rpc(from string, requestId int, body []byte) (res []byte, e error) {
 	case <-time.After(time.Second):
 		e = errors.New("rpc timeout")
 	case b = <-ch:
-		resp := struct {
-			RequestId int    `json:"request_id"`
-			Body      []byte `json:"body"`
-		}{}
-		if e = jsoniter.Unmarshal(b, &resp); e != nil {
-			return
-		}
-		res = resp.Body
+		res = b
 	}
 
 	return
