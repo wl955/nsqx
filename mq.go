@@ -42,6 +42,8 @@ func Init(opts ...Option) (cancel func(), e error) {
 				return
 			}
 
+			consumer.SetLoggerLevel(nsq.LogLevelWarning)
+
 			// Set the Handler for messages received by this Consumer. Can be called multiple times.
 			// See also AddConcurrentHandlers.
 			consumer.AddHandler(route.handler)
@@ -79,7 +81,7 @@ func Init(opts ...Option) (cancel func(), e error) {
 	}, nil
 }
 
-func Sub(topic string, channel string, handler nsq.Handler) (e error) {
+func Sub(topic, channel string, handler nsq.Handler) (e error) {
 	routes = append(routes, Route{
 		topic:   topic,
 		channel: channel,
@@ -89,6 +91,9 @@ func Sub(topic string, channel string, handler nsq.Handler) (e error) {
 }
 
 func Pub(topic string, body []byte) error {
+	if nil == producer {
+		return nil
+	}
 	// Synchronously publish a single message to the specified topic.
 	// Messages can also be sent asynchronously and/or in batches.
 	return producer.Publish(topic, body)
