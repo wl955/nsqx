@@ -1,4 +1,4 @@
-module github.com/wl955/nsqx
+module github.com/wlbwlbwlb/mq
 
 go 1.17
 
