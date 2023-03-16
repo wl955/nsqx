@@ -1,4 +1,4 @@
-package nsqx
+package mq
 
 type Options struct {
 	lookupdAddr string
