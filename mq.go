@@ -1,7 +1,12 @@
 package mq
 
 import (
+	"io"
+	"log"
+	"os"
+
 	"github.com/nsqio/go-nsq"
+	mylog "github.com/wlbwlbwlb/log"
 )
 
 var consumers []*nsq.Consumer
@@ -41,8 +46,7 @@ func Init(opts ...Option) (cancel func(), e error) {
 			if e != nil {
 				return
 			}
-
-			consumer.SetLoggerLevel(nsq.LogLevelWarning)
+			consumer.SetLogger(log.New(io.MultiWriter(os.Stderr, mylog.Writer()), "", log.Flags()), nsq.LogLevelInfo)
 
 			// Set the Handler for messages received by this Consumer. Can be called multiple times.
 			// See also AddConcurrentHandlers.
@@ -65,6 +69,7 @@ func Init(opts ...Option) (cancel func(), e error) {
 		if e != nil {
 			return
 		}
+		producer.SetLogger(log.New(io.MultiWriter(os.Stderr, mylog.Writer()), "", log.Flags()), nsq.LogLevelInfo)
 	}
 
 	return func() {
