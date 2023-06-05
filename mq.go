@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/nsqio/go-nsq"
 	mylog "github.com/wlbwlbwlb/log"
@@ -102,4 +103,8 @@ func Pub(topic string, body []byte) error {
 	// Synchronously publish a single message to the specified topic.
 	// Messages can also be sent asynchronously and/or in batches.
 	return producer.Publish(topic, body)
+}
+
+func DeferPub(topic string, delay time.Duration, body []byte) error {
+	return producer.DeferredPublish(topic, delay, body)
 }
