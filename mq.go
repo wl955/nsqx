@@ -18,22 +18,7 @@ var config = nsq.NewConfig()
 
 var custom = Options{}
 
-func Init(opts ...Option) (cancel func(), e error) {
-	defer func() {
-		if e != nil {
-			if len(custom.lookupdAddr) > 0 {
-				for _, consumer := range consumers {
-					// Gracefully stop the consumer.
-					consumer.Stop()
-				}
-			}
-			if len(custom.nsqdAddr) > 0 {
-				// Gracefully stop the producer when appropriate (e.g. before shutting down the service)
-				producer.Stop()
-			}
-		}
-	}()
-
+func Init(opts ...Option) (e error) {
 	for _, opt := range opts {
 		opt(&custom)
 	}
@@ -73,18 +58,23 @@ func Init(opts ...Option) (cancel func(), e error) {
 		producer.SetLogger(log.New(io.MultiWriter(os.Stderr, mylog.Writer()), "", log.Flags()), nsq.LogLevelInfo)
 	}
 
-	return func() {
-		if len(custom.lookupdAddr) > 0 {
-			for _, consumer := range consumers {
-				// Gracefully stop the consumer.
-				consumer.Stop()
-			}
+	return
+}
+
+func StopProducer() {
+	if len(custom.nsqdAddr) > 0 {
+		// Gracefully stop the producer when appropriate (e.g. before shutting down the service)
+		producer.Stop()
+	}
+}
+
+func StopConsumers() {
+	if len(custom.lookupdAddr) > 0 {
+		for _, consumer := range consumers {
+			// Gracefully stop the consumer.
+			consumer.Stop()
 		}
-		if len(custom.nsqdAddr) > 0 {
-			// Gracefully stop the producer when appropriate (e.g. before shutting down the service)
-			producer.Stop()
-		}
-	}, nil
+	}
 }
 
 func Sub(topic, channel string, handler nsq.Handler) (e error) {
