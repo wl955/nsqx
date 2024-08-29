@@ -1,9 +1,7 @@
 package mq
 
 import (
-	"errors"
 	"log"
-	"time"
 
 	"github.com/nsqio/go-nsq"
 )
@@ -88,16 +86,16 @@ func Sub(topic, channel string, handler nsq.Handler) (e error) {
 	return
 }
 
-func PubAsync(topic string, body []byte) error {
-	if nil == producer {
-		return errors.New("init first")
-	}
-	return producer.PublishAsync(topic, body, nil)
-}
+//func PubAsync(topic string, body []byte) error {
+//	if nil == producer {
+//		return errors.New("init first")
+//	}
+//	return producer.PublishAsync(topic, body, nil)
+//}
 
-func DeferPubAsync(topic string, delay time.Duration, body []byte) error {
-	if nil == producer {
-		return errors.New("init first")
-	}
-	return producer.DeferredPublishAsync(topic, delay, body, nil)
-}
+//func DeferPubAsync(topic string, delay time.Duration, body []byte) error {
+//	if nil == producer {
+//		return errors.New("init first")
+//	}
+//	return producer.DeferredPublishAsync(topic, delay, body, nil)
+//}
