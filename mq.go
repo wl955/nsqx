@@ -1,6 +1,7 @@
 package mq
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -87,15 +88,16 @@ func Sub(topic, channel string, handler nsq.Handler) (e error) {
 	return
 }
 
-func Pub(topic string, body []byte) error {
+func PubAsync(topic string, body []byte) error {
 	if nil == producer {
-		return nil
+		return errors.New("init first")
 	}
-	// Synchronously publish a single message to the specified topic.
-	// Messages can also be sent asynchronously and/or in batches.
-	return producer.Publish(topic, body)
+	return producer.PublishAsync(topic, body, nil)
 }
 
-func DeferPub(topic string, delay time.Duration, body []byte) error {
-	return producer.DeferredPublish(topic, delay, body)
+func DeferPubAsync(topic string, delay time.Duration, body []byte) error {
+	if nil == producer {
+		return errors.New("init first")
+	}
+	return producer.DeferredPublishAsync(topic, delay, body, nil)
 }

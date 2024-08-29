@@ -1,6 +1,8 @@
 package mq
 
-import "io"
+import (
+	"io"
+)
 
 type Options struct {
 	lookupdAddr string

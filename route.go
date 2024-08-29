@@ -1,6 +1,8 @@
 package mq
 
-import "github.com/nsqio/go-nsq"
+import (
+	"github.com/nsqio/go-nsq"
+)
 
 type Route struct {
 	topic   string
@@ -8,4 +10,4 @@ type Route struct {
 	handler nsq.Handler
 }
 
-var routes []Route
+var routes = make([]Route, 0)
