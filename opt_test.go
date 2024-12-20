@@ -12,12 +12,12 @@ func TestWriter(t *testing.T) {
 	//    opt_test.go:7: writer = nil
 
 	var u *User
-	var us []*User
+	var s []*User
 	for i := 21; i < 26; i++ {
 		u = &User{Age: i}
-		us = append(us, u)
+		s = append(s, u)
 	}
-	for _, v := range us {
+	for _, v := range s {
 		t.Logf("%+v", *v)
 	}
 	//    opt_test.go:22: {Age:21}
